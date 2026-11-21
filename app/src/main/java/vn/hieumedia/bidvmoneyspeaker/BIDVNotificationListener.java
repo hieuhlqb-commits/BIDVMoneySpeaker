@@ -71,6 +71,7 @@ public class BIDVNotificationListener extends NotificationListenerService {
         if (!(pkg.contains("bidv") || app.contains("bidv"))) return;
 
         Notification n = sbn.getNotification(); Bundle e = n.extras;
+        if (e == null) return;
         StringBuilder raw = new StringBuilder();
         append(raw, e.getCharSequence(Notification.EXTRA_TITLE));
         append(raw, e.getCharSequence(Notification.EXTRA_BIG_TEXT));
@@ -122,12 +123,9 @@ public class BIDVNotificationListener extends NotificationListenerService {
             String content = capture(CONTENT, s);
             if (!content.isEmpty()) out.append("Nội dung chuyển khoản: ").append(clean(content)).append(". ");
         }
-        // If the selected fields are not explicitly labelled in BIDV's notification format,
-        // retain the original message so useful transaction details are not silently lost.
-        if (out.toString().trim().equals("Giao dịch tiền vào.") || out.toString().trim().equals("Giao dịch tiền ra.") || out.toString().trim().equals("Thông báo giao dịch BIDV.")) {
-            String fallback = clean(s);
-            if (!fallback.isEmpty()) out.append(fallback);
-        }
+        // Privacy-first: never read the whole raw notification as a fallback.
+        // If BIDV changes its notification format, speak only the transaction direction
+        // until the parser is updated, so disabled fields are not read accidentally.
         return out.toString().trim();
     }
     private static String capture(Pattern pattern, String source) {

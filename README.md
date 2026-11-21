@@ -40,3 +40,24 @@ GitHub Actions đã được cấu hình để build khi push nhánh `main`/`mas
 
 ## Quyền riêng tư
 Ứng dụng cần quyền Notification Listener để đọc thông báo. Quyền này có thể cho phép Android hiển thị nội dung thông báo từ nhiều ứng dụng, nhưng mã nguồn hiện chỉ xử lý thông báo có nguồn nhận diện BIDV. Không gửi dữ liệu lên máy chủ.
+
+
+## Bản 1.2.0 – phát hành Release
+
+- Chuyển cấu hình build mặc định của workflow sang `assembleRelease`; bản Release không bật `debuggable`.
+- Không khai báo quyền INTERNET, SMS hoặc danh bạ.
+- Dịch vụ chỉ tiếp nhận thông báo từ ứng dụng có package/tên hiển thị chứa `BIDV`.
+- Không lưu nội dung thông báo vào tệp hoặc gửi lên máy chủ.
+- Đã bỏ cơ chế đọc nguyên văn toàn bộ thông báo khi bộ phân tích không nhận diện được trường; điều này tránh đọc nhầm trường người dùng đã tắt.
+- Nếu thông báo BIDV thực tế có định dạng khác, cần cập nhật bộ phân tích theo mẫu thông báo đã che thông tin cá nhân.
+
+### Ký APK Release bằng GitHub Actions
+
+Tạo keystore riêng trên thiết bị tin cậy và giữ bản sao dự phòng an toàn. Không đưa keystore hoặc mật khẩu vào Git repository. Sau đó tạo 4 GitHub Actions Secrets trong repository:
+
+- `ANDROID_KEYSTORE_BASE64`: nội dung Base64 của tệp keystore.
+- `ANDROID_KEYSTORE_PASSWORD`: mật khẩu keystore.
+- `ANDROID_KEY_ALIAS`: alias của khóa.
+- `ANDROID_KEY_PASSWORD`: mật khẩu khóa.
+
+Nếu chưa cấu hình đủ secrets, workflow có thể tạo APK Release chưa ký để thử nghiệm; không phân phối APK đó như bản chính thức. Sau khi cấu hình secrets, chạy lại workflow để nhận APK Release đã ký. Giữ nguyên keystore này cho mọi bản cập nhật sau, nếu không Android sẽ không cho cài đè lên bản đã ký bằng khóa khác.

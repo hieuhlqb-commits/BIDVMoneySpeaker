@@ -2,6 +2,7 @@
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <application
         android:allowBackup="false"
+        android:fullBackupContent="false"
         android:label="BIDV Money Speaker"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="false">
